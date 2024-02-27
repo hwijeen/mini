@@ -33,7 +33,7 @@ These are my simplified implementations of the building blocks of ML that I find
 * In practice we sample a few time steps, as gradient from different time steps are pretty much correlated.
 
 
-### Rotary position embedding
+### minirope.py
 * Implementation of RoPE.
 * Reference: Eq24 in the original [Rotary Embedding paper](https://arxiv.org/pdf/2104.09864.pdf), [Huggingface implementation](https://github.com/huggingface/transformers/blob/8e164c5400b7b413c7b8fb32e35132001effc970/src/transformers/models/roformer/modeling_roformer.py#L319), [lucidrain's implementation](https://github.com/lucidrains/rotary-embedding-torch/blob/783d17820ac1e75e918ae2128ab8bbcbe4985362/rotary_embedding_torch/rotary_embedding_torch.py#L36)
 * RoPE adds positional information into attention computation in every layer.
