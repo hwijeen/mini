@@ -17,7 +17,20 @@ These are my simplified implementations of the building blocks of ML that I find
 ### minidiffusion.py
 * Minimal implementation of forward and backward diffusion process.
 * Reference: [CMU Generative AI course](https://www.cs.cmu.edu/~mgormley/courses/10423/coursework.html), [tiny-diffusion](https://github.com/tanelp/tiny-diffusion?tab=readme-ov-file), and Huggingface's [Diffusers](https://github.com/huggingface/diffusers/blob/main/src/diffusers/models/unets/unet_2d.py).
-* Details: We sample time steps when training, A lot of Gaussian related repeated computation should be pre-computed and saved, UNet predicts the error that would have produced an (noisy) image
+* Diffusion model is a generative model that enables generating an image. This means that we need to learn p(x).
+* It is assumed about the data generation process that that there are latent variable that give rise to observation. z -> x.
+* As we introduce the latent variable, computing the gradient of p(x) is impossible as it entails marginalizing out z. So we resort to minimizing the lower bound.
+
+* Forward and reverse process are exact specification of the "z - x". Markov assumption is made.
+* Forward process goes from x to z. It defines q(x_t|x_{t-1}) as adding Gaussian noise to previous state. Mean and std are set such that the distribution at the end of the forward process will follow Gaussian with 0 mean and std of I.
+* The process of going from z to x is called reverse process in the diffusion model. The exact reverse process p(x_{t-1}|x_t) is intractable due to the dependence on x_0 (original data). Instead we define p(x_{t-1}|x_t, x_0).
+* We are going to define learned reverse process that behaves like the exact reverse process like above, but this one is not conditioned on the original image x_0. It will allow us to go from the random noise z to an image x_0. This will be parameterized with a neural network (e.g. UNet)
+
+* The ELBO objective can be seen as matching the states from the exact reverse process and learned reverse process.
+
+* The training procedure is at a time step, we analytically calculate x_t with forward process (=iteratively applying Gaussian noise), and have the learned backward process match the exact backward process.
+* Matching can be defined as matching the mean, the original image reconstructed from x_t, the error that gave rise to x_t.
+* In practice we sample a few time steps, as gradient from different time steps are pretty much correlated.
 
 
 ### Rotary position embedding
