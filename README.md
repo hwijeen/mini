@@ -9,6 +9,17 @@ These are my simplified implementations of the building blocks of ML that I find
 
 
 ## Done
+
+### Tensor parallelism
+* Minimal implementation of an MLP layer in tensor model parallelism using Pytorch
+* Reference: [MegatronLM](https://arxiv.org/pdf/1909.08053.pdf), [tutorial](https://nbviewer.org/github/tunib-ai/large-scale-lm-tutorials/blob/main/notebooks/07_tensor_parallelism.ipynb)
+* We need a different approach from the data parallelism in order to fit a model bigger than the GPU memory. The idea of tensor parallelism is to split the model in a way that minimizes the communication and keeping the GPUs compute bound.
+* MLP(X) = GeLU(Dropout(GeLU(XW_1)W'))
+* The first weight is split column wise. Given $Y = GeLU(XW)$, split W into columns ($W = [W_1; W_2]$) to get $Y = GeLU([XW_1; XW_2] = [GeLU(Y_1); GeLU(Y_2)]$ which allows computing GeLU without synchronization.
+* The second weight is row-wise split. $YW' = Y_1W'_1 + Y_2W'_2$. The synchronization happens once, right before the dropout layer.
+
+
+
 ### minigrad.py
 * Minimal implementation of reverse mode auto diff.
 * Reference: PyTorch, [CMU Deep Learning Systems course](https://github.com/dlsyscourse/hw1/blob/main/hw1.ipynb), and [Karpathy's micrograd](https://github.com/karpathy/micrograd).
